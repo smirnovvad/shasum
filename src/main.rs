@@ -145,7 +145,6 @@ fn main() {
                  .short("a")
                  .takes_value(true)
                  .possible_values(&["1", "256", "512"])
-                 .help("1 (default), 256,  512")
                  .default_value("1"))
         .get_matches();
 
