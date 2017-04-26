@@ -1,0 +1,9 @@
+[package]
+name = "shasum"
+version = "0.1.0"
+authors = ["Vadim Smirnov <smirnovvad7@gmail.com>"]
+
+[dependencies]
+
+octavo = { git = "https://github.com/libOctavo/octavo" }
+clap = "^2"
