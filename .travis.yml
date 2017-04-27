@@ -2,3 +2,5 @@ os:
   - linux
   - osx
 language: rust
+notifications:
+  email: false
