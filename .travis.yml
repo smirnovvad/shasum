@@ -2,7 +2,7 @@ deploy:
   provider: releases
   api_key:
     secure: CDPiX0DnQ3yRoUSZe9+2Z8cSbMloizRY+CTA06bdo88VJ64Xeohh6x8DEt7bj4A67fwr+twj3PZIH2Jl1phF/DXKLx3M+HbYwkRkvFiu/VdA/22yuBv8tZkeoc/IiDxTBcKokxCJ8pnSJO7V+YLS9hCLH7fYtZze2Tv3pb2FRM21JaplFxpA1nlxREExZSkZWEDFcxejenf31uqA7u99+1GkUZTOdqeKKXR97rixW+G/6inEFc5vsnpTa6bm8DOx1plYskEaYG9TPYvHqWU8EFUYsyPotc7UiOT0IpTH3cTezAmPYTyiHfoKF4lKTVjAUubWHNLtuySQTGdMt65BqVZKn4lTt5CaOer/80k5PZKy7GdeSaknNfp9ht+sLfHnQD+s5WEm7gB1X/s9RvbcXTaihymv/5S4N5CBX7V39QjkSPgRNMPVOtFQrQIFlvqMlpY3bftehuXUgHrgI68BcaeJfoOUuFoNEBGeHzp2nFTaibHRkaKnaNoOyzpybbRz5Rje0XAFRAShTCEkTiMk1nWEPhinrfK13CDPpKjwJRMmhqOYPrApyuLsV7a3MfXNZAymlFST2PUFlLlGKUn5suCTFJelmdaXIMW2kstsdAs8+xVo6S/XBuToTO+WqLFW7zw9Y22oU7BV5rir4iUbxXu4iA87CVI7egcnqx8JcP8=
-  file: target/debug/shasum
+  file: ./target/debug/shasum
   on:
     repo: smirnovvad/shasum
 language: rust
