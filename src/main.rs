@@ -101,9 +101,9 @@ fn calculate_sha512224(path: &Path) -> String {
                         Ok(file) => file,
                     };
 
-                    let mut s = Vec::new();
+                    let mut data = Vec::new();
                     if entry.path().is_file() {
-                        match file.read_to_end(&mut s) {
+                        match file.read_to_end(&mut data) {
                             Err(why) => {
                                 panic!("couldn't read {}: {}, {:?}",
                                        path.display(),
@@ -111,7 +111,6 @@ fn calculate_sha512224(path: &Path) -> String {
                                        entry.path())
                             }
                             Ok(_) => {
-                                let data = s;
                                 let mut result = vec![0; sha2::Sha512224::output_bytes()];
                                 let mut sha = sha2::Sha512224::default();
 
@@ -134,12 +133,11 @@ fn calculate_sha512224(path: &Path) -> String {
                 Ok(file) => file,
             };
 
-            let mut s = Vec::new();
+            let mut data = Vec::new();
 
-            match file.read_to_end(&mut s) {
+            match file.read_to_end(&mut data) {
                 Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
                 Ok(_) => {
-                    let data = s;
                     let mut result = vec![0; sha2::Sha512224::output_bytes()];
                     let mut sha = sha2::Sha512224::default();
 
@@ -170,9 +168,9 @@ fn calculate_sha512(path: &Path) -> String {
                         Ok(file) => file,
                     };
 
-                    let mut s = Vec::new();
+                    let mut data = Vec::new();
                     if entry.path().is_file() {
-                        match file.read_to_end(&mut s) {
+                        match file.read_to_end(&mut data) {
                             Err(why) => {
                                 panic!("couldn't read {}: {}, {:?}",
                                        path.display(),
@@ -180,7 +178,6 @@ fn calculate_sha512(path: &Path) -> String {
                                        entry.path())
                             }
                             Ok(_) => {
-                                let data = s;
                                 let mut result = vec![0; sha2::Sha512::output_bytes()];
                                 let mut sha = sha2::Sha512::default();
 
@@ -203,12 +200,11 @@ fn calculate_sha512(path: &Path) -> String {
                 Ok(file) => file,
             };
 
-            let mut s = Vec::new();
+            let mut data = Vec::new();
 
-            match file.read_to_end(&mut s) {
+            match file.read_to_end(&mut data) {
                 Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
                 Ok(_) => {
-                    let data = s;
                     let mut result = vec![0; sha2::Sha512::output_bytes()];
                     let mut sha = sha2::Sha512::default();
 
@@ -224,7 +220,6 @@ fn calculate_sha512(path: &Path) -> String {
 
 
 fn calculate_sha384(path: &Path) -> String {
-
     let mut results = Vec::new();
     match path.is_dir() {
         true => {
@@ -274,12 +269,11 @@ fn calculate_sha384(path: &Path) -> String {
                 Ok(file) => file,
             };
 
-            let mut s = Vec::new();
+            let mut data = Vec::new();
 
-            match file.read_to_end(&mut s) {
+            match file.read_to_end(&mut data) {
                 Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
                 Ok(_) => {
-                    let data = s;
                     let mut result = vec![0; sha2::Sha384::output_bytes()];
                     let mut sha = sha2::Sha384::default();
 
@@ -310,9 +304,9 @@ fn calculate_sha256(path: &Path) -> String {
                         Ok(file) => file,
                     };
 
-                    let mut s = Vec::new();
+                    let mut data = Vec::new();
                     if entry.path().is_file() {
-                        match file.read_to_end(&mut s) {
+                        match file.read_to_end(&mut data) {
                             Err(why) => {
                                 panic!("couldn't read {}: {}, {:?}",
                                        path.display(),
@@ -320,7 +314,6 @@ fn calculate_sha256(path: &Path) -> String {
                                        entry.path())
                             }
                             Ok(_) => {
-                                let data = s;
                                 let mut result = vec![0; sha2::Sha256::output_bytes()];
                                 let mut sha = sha2::Sha256::default();
 
@@ -343,12 +336,11 @@ fn calculate_sha256(path: &Path) -> String {
                 Ok(file) => file,
             };
 
-            let mut s = Vec::new();
+            let mut data = Vec::new();
 
-            match file.read_to_end(&mut s) {
+            match file.read_to_end(&mut data) {
                 Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
                 Ok(_) => {
-                    let data = s;
                     let mut result = vec![0; sha2::Sha256::output_bytes()];
                     let mut sha = sha2::Sha256::default();
 
@@ -381,9 +373,9 @@ fn calculate_sha224(path: &Path) -> String {
                         Ok(file) => file,
                     };
 
-                    let mut s = Vec::new();
+                    let mut data = Vec::new();
                     if entry.path().is_file() {
-                        match file.read_to_end(&mut s) {
+                        match file.read_to_end(&mut data) {
                             Err(why) => {
                                 panic!("couldn't read {}: {}, {:?}",
                                        path.display(),
@@ -391,7 +383,6 @@ fn calculate_sha224(path: &Path) -> String {
                                        entry.path())
                             }
                             Ok(_) => {
-                                let data = s;
                                 let mut result = vec![0; sha2::Sha224::output_bytes()];
                                 let mut sha = sha2::Sha224::default();
 
@@ -414,12 +405,11 @@ fn calculate_sha224(path: &Path) -> String {
                 Ok(file) => file,
             };
 
-            let mut s = Vec::new();
+            let mut data = Vec::new();
 
-            match file.read_to_end(&mut s) {
+            match file.read_to_end(&mut data) {
                 Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
                 Ok(_) => {
-                    let data = s;
                     let mut result = vec![0; sha2::Sha224::output_bytes()];
                     let mut sha = sha2::Sha224::default();
 
@@ -451,9 +441,9 @@ fn calculate_sha1(path: &Path) -> String {
                         Ok(file) => file,
                     };
 
-                    let mut s = Vec::new();
+                    let mut data = Vec::new();
                     if entry.path().is_file() {
-                        match file.read_to_end(&mut s) {
+                        match file.read_to_end(&mut data) {
                             Err(why) => {
                                 panic!("couldn't read {}: {}, {:?}",
                                        path.display(),
@@ -461,7 +451,6 @@ fn calculate_sha1(path: &Path) -> String {
                                        entry.path())
                             }
                             Ok(_) => {
-                                let data = s;
                                 let mut result = vec![0; Sha1::output_bytes()];
                                 let mut sha = Sha1::default();
 
@@ -484,12 +473,11 @@ fn calculate_sha1(path: &Path) -> String {
                 Ok(file) => file,
             };
 
-            let mut s = Vec::new();
+            let mut data = Vec::new();
 
-            match file.read_to_end(&mut s) {
+            match file.read_to_end(&mut data) {
                 Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
                 Ok(_) => {
-                    let data = s;
                     let mut result = vec![0; Sha1::output_bytes()];
                     let mut sha = Sha1::default();
 
