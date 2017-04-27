@@ -5,4 +5,5 @@ linker = "i686-w64-mingw32-gcc"
 linker = "x86_64-w64-mingw32-gcc"
 
 [target.i686-unknown-linux-gnu]
-linker = "gcc"
+
+[target.x86_64-apple-darwin]
