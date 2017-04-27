@@ -26,7 +26,7 @@ also can print hash for each file in directory
 b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1    ./LICENSE
 ```
 ```
-→ ./target/x86_64-apple-darwin/release/shasum ./
+→ ./shasum ./
 9b590aaaa51c06b11a30491cab86575dd462670e   ./.gitignore
 ba6d16a4e988679755ad199ac081020f5b885451   ./.travis.yml
 1c809b2457dcc9fa32940180bd713aae803c0f15   ./Cargo.lock
