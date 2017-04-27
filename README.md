@@ -1,4 +1,6 @@
 # shasum
+[![Build Status](https://travis-ci.org/smirnovvad/shasum.svg?branch=master)](https://travis-ci.org/smirnovvad/shasum)
+
 shasum implemented in rust using octavo lib
 
 Calculate sha hashes for files
