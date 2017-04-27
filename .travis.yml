@@ -8,3 +8,5 @@ deploy:
 language: rust
 rust:
 - stable
+after_success:
+  - cargo build --release
