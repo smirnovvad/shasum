@@ -9,13 +9,13 @@ also can print hash for each file in directory
 
 >USAGE:
 >    shasum [OPTIONS] <INPUT>
-
+>
 >FLAGS:
 >    -h, --help       Prints help information
 >    -V, --version    Prints version information
-
+>
 >OPTIONS:
->    -a <algorithm>        [default: 1]  [values: 1, 256, 512]
-
+>    -a <algorithm>        [default: 1]  [values: 1, 224, 256, 384, 512, 512224, 512256]
+>
 >ARGS:
 >    <INPUT>    Sets the input file to use
