@@ -1,90 +1,16 @@
-extern crate octavo;
 extern crate clap;
-use octavo::octavo_digest::prelude::*;
+extern crate crypto;
 use clap::{Arg, App};
 use std::error::Error;
 use std::fs;
 use std::io::prelude::*;
 use std::path::Path;
-
-
-pub fn to_hex_string(bytes: Vec<u8>) -> String {
-    let strs: Vec<String> = bytes.iter().map(|b| format!("{:02x}", b)).collect();
-    strs.join("")
-}
-
+use self::crypto::digest::Digest;
+use self::crypto::sha1::*;
+use self::crypto::sha2::*;
 
 
 fn calculate_sha512256(path: &Path) -> String {
-    let mut results = Vec::new();
-    match path.is_dir() {
-        true => {
-
-            let paths = fs::read_dir(path).unwrap();
-            for entry in paths {
-                if let Ok(entry) = entry {
-                    // Here, `entry` is a `DirEntry`.
-
-                    let mut file = match fs::File::open(entry.path()) {
-                        Err(why) => {
-                            panic!("Couldn't read {}: {}", path.display(), why.description())
-                        }
-                        Ok(file) => file,
-                    };
-
-                    let mut s = Vec::new();
-                    if entry.path().is_file() {
-                        match file.read_to_end(&mut s) {
-                            Err(why) => {
-                                panic!("couldn't read {}: {}, {:?}",
-                                       path.display(),
-                                       why.description(),
-                                       entry.path())
-                            }
-                            Ok(_) => {
-                                let data = s;
-                                let mut result = vec![0; sha2::Sha512256::output_bytes()];
-                                let mut sha = sha2::Sha512256::default();
-
-                                sha.update(data);
-                                sha.result(&mut result);
-                                results.push(to_hex_string(result) + "   " +
-                                             entry.path().to_str().unwrap());
-                            }
-                        }
-                    }
-                }
-            }
-            results.join("\n")
-
-        }
-
-        false => {
-            let mut file = match fs::File::open(&path) {
-                Err(why) => panic!("Couldn't read {}: {}", path.display(), why.description()),
-                Ok(file) => file,
-            };
-
-            let mut s = Vec::new();
-
-            match file.read_to_end(&mut s) {
-                Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
-                Ok(_) => {
-                    let data = s;
-                    let mut result = vec![0; sha2::Sha512256::output_bytes()];
-                    let mut sha = sha2::Sha512256::default();
-
-                    sha.update(data);
-                    sha.result(&mut result);
-                    String::from(to_hex_string(result) + "    " + path.to_str().unwrap())
-                }
-            }
-        }
-    }
-}
-
-
-fn calculate_sha512224(path: &Path) -> String {
     let mut results = Vec::new();
     match path.is_dir() {
         true => {
@@ -111,13 +37,10 @@ fn calculate_sha512224(path: &Path) -> String {
                                        entry.path())
                             }
                             Ok(_) => {
-                                let mut result = vec![0; sha2::Sha512224::output_bytes()];
-                                let mut sha = sha2::Sha512224::default();
-
-                                sha.update(data);
-                                sha.result(&mut result);
-                                results.push(to_hex_string(result) + "   " +
-                                             entry.path().to_str().unwrap());
+                                let mut hasher = Sha512Trunc256::new();
+                                hasher.input(&data);
+                                results.push(hasher.result_str() + "    " +
+                                             entry.path().to_str().unwrap())
                             }
                         }
                     }
@@ -138,12 +61,71 @@ fn calculate_sha512224(path: &Path) -> String {
             match file.read_to_end(&mut data) {
                 Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
                 Ok(_) => {
-                    let mut result = vec![0; sha2::Sha512224::output_bytes()];
-                    let mut sha = sha2::Sha512224::default();
+                    let mut hasher = Sha512Trunc256::new();
+                    hasher.input(&data);
+                    String::from(hasher.result_str() + "    " + path.to_str().unwrap())
+                }
+            }
+        }
+    }
+}
 
-                    sha.update(data);
-                    sha.result(&mut result);
-                    String::from(to_hex_string(result) + "    " + path.to_str().unwrap())
+
+fn calculate_sha512224(path: &Path) -> String {
+
+    let mut results = Vec::new();
+    match path.is_dir() {
+        true => {
+
+            let paths = fs::read_dir(path).unwrap();
+            for entry in paths {
+                if let Ok(entry) = entry {
+                    // Here, `entry` is a `DirEntry`.
+
+                    let mut file = match fs::File::open(entry.path()) {
+                        Err(why) => {
+                            panic!("Couldn't read {}: {}", path.display(), why.description())
+                        }
+                        Ok(file) => file,
+                    };
+
+                    let mut data = Vec::new();
+                    if entry.path().is_file() {
+                        match file.read_to_end(&mut data) {
+                            Err(why) => {
+                                panic!("couldn't read {}: {}, {:?}",
+                                       path.display(),
+                                       why.description(),
+                                       entry.path())
+                            }
+                            Ok(_) => {
+                                let mut hasher = Sha512Trunc224::new();
+                                hasher.input(&data);
+                                results.push(hasher.result_str() + "    " +
+                                             entry.path().to_str().unwrap())
+                            }
+                        }
+                    }
+                }
+            }
+            results.join("\n")
+
+        }
+
+        false => {
+            let mut file = match fs::File::open(&path) {
+                Err(why) => panic!("Couldn't read {}: {}", path.display(), why.description()),
+                Ok(file) => file,
+            };
+
+            let mut data = Vec::new();
+
+            match file.read_to_end(&mut data) {
+                Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
+                Ok(_) => {
+                    let mut hasher = Sha512Trunc224::new();
+                    hasher.input(&data);
+                    String::from(hasher.result_str() + "    " + path.to_str().unwrap())
                 }
             }
         }
@@ -178,13 +160,10 @@ fn calculate_sha512(path: &Path) -> String {
                                        entry.path())
                             }
                             Ok(_) => {
-                                let mut result = vec![0; sha2::Sha512::output_bytes()];
-                                let mut sha = sha2::Sha512::default();
-
-                                sha.update(data);
-                                sha.result(&mut result);
-                                results.push(to_hex_string(result) + "   " +
-                                             entry.path().to_str().unwrap());
+                                let mut hasher = Sha512::new();
+                                hasher.input(&data);
+                                results.push(hasher.result_str() + "    " +
+                                             entry.path().to_str().unwrap())
                             }
                         }
                     }
@@ -205,12 +184,9 @@ fn calculate_sha512(path: &Path) -> String {
             match file.read_to_end(&mut data) {
                 Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
                 Ok(_) => {
-                    let mut result = vec![0; sha2::Sha512::output_bytes()];
-                    let mut sha = sha2::Sha512::default();
-
-                    sha.update(data);
-                    sha.result(&mut result);
-                    String::from(to_hex_string(result) + "    " + path.to_str().unwrap())
+                    let mut hasher = Sha512::new();
+                    hasher.input(&data);
+                    String::from(hasher.result_str() + "    " + path.to_str().unwrap())
                 }
             }
         }
@@ -236,9 +212,9 @@ fn calculate_sha384(path: &Path) -> String {
                         Ok(file) => file,
                     };
 
-                    let mut s = Vec::new();
+                    let mut data = Vec::new();
                     if entry.path().is_file() {
-                        match file.read_to_end(&mut s) {
+                        match file.read_to_end(&mut data) {
                             Err(why) => {
                                 panic!("couldn't read {}: {}, {:?}",
                                        path.display(),
@@ -246,14 +222,10 @@ fn calculate_sha384(path: &Path) -> String {
                                        entry.path())
                             }
                             Ok(_) => {
-                                let data = s;
-                                let mut result = vec![0; sha2::Sha384::output_bytes()];
-                                let mut sha = sha2::Sha384::default();
-
-                                sha.update(data);
-                                sha.result(&mut result);
-                                results.push(to_hex_string(result) + "   " +
-                                             entry.path().to_str().unwrap());
+                                let mut hasher = Sha384::new();
+                                hasher.input(&data);
+                                results.push(hasher.result_str() + "    " +
+                                             entry.path().to_str().unwrap())
                             }
                         }
                     }
@@ -274,12 +246,9 @@ fn calculate_sha384(path: &Path) -> String {
             match file.read_to_end(&mut data) {
                 Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
                 Ok(_) => {
-                    let mut result = vec![0; sha2::Sha384::output_bytes()];
-                    let mut sha = sha2::Sha384::default();
-
-                    sha.update(data);
-                    sha.result(&mut result);
-                    String::from(to_hex_string(result) + "    " + path.to_str().unwrap())
+                    let mut hasher = Sha384::new();
+                    hasher.input(&data);
+                    String::from(hasher.result_str() + "    " + path.to_str().unwrap())
                 }
             }
         }
@@ -314,13 +283,10 @@ fn calculate_sha256(path: &Path) -> String {
                                        entry.path())
                             }
                             Ok(_) => {
-                                let mut result = vec![0; sha2::Sha256::output_bytes()];
-                                let mut sha = sha2::Sha256::default();
-
-                                sha.update(data);
-                                sha.result(&mut result);
-                                results.push(to_hex_string(result) + "   " +
-                                             entry.path().to_str().unwrap());
+                                let mut hasher = Sha256::new();
+                                hasher.input(&data);
+                                results.push(hasher.result_str() + "    " +
+                                             entry.path().to_str().unwrap())
                             }
                         }
                     }
@@ -341,18 +307,14 @@ fn calculate_sha256(path: &Path) -> String {
             match file.read_to_end(&mut data) {
                 Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
                 Ok(_) => {
-                    let mut result = vec![0; sha2::Sha256::output_bytes()];
-                    let mut sha = sha2::Sha256::default();
-
-                    sha.update(data);
-                    sha.result(&mut result);
-                    String::from(to_hex_string(result) + "    " + path.to_str().unwrap())
+                    let mut hasher = Sha256::new();
+                    hasher.input(&data);
+                    String::from(hasher.result_str() + "    " + path.to_str().unwrap())
                 }
             }
         }
     }
 }
-
 
 
 fn calculate_sha224(path: &Path) -> String {
@@ -383,13 +345,10 @@ fn calculate_sha224(path: &Path) -> String {
                                        entry.path())
                             }
                             Ok(_) => {
-                                let mut result = vec![0; sha2::Sha224::output_bytes()];
-                                let mut sha = sha2::Sha224::default();
-
-                                sha.update(data);
-                                sha.result(&mut result);
-                                results.push(to_hex_string(result) + "   " +
-                                             entry.path().to_str().unwrap());
+                                let mut hasher = Sha224::new();
+                                hasher.input(&data);
+                                results.push(hasher.result_str() + "    " +
+                                             entry.path().to_str().unwrap())
                             }
                         }
                     }
@@ -410,12 +369,9 @@ fn calculate_sha224(path: &Path) -> String {
             match file.read_to_end(&mut data) {
                 Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
                 Ok(_) => {
-                    let mut result = vec![0; sha2::Sha224::output_bytes()];
-                    let mut sha = sha2::Sha224::default();
-
-                    sha.update(data);
-                    sha.result(&mut result);
-                    String::from(to_hex_string(result) + "    " + path.to_str().unwrap())
+                    let mut hasher = Sha224::new();
+                    hasher.input(&data);
+                    String::from(hasher.result_str() + "    " + path.to_str().unwrap())
                 }
             }
         }
@@ -428,7 +384,6 @@ fn calculate_sha1(path: &Path) -> String {
     let mut results = Vec::new();
     match path.is_dir() {
         true => {
-
             let paths = fs::read_dir(path).unwrap();
             for entry in paths {
                 if let Ok(entry) = entry {
@@ -451,16 +406,14 @@ fn calculate_sha1(path: &Path) -> String {
                                        entry.path())
                             }
                             Ok(_) => {
-                                let mut result = vec![0; Sha1::output_bytes()];
-                                let mut sha = Sha1::default();
-
-                                sha.update(data);
-                                sha.result(&mut result);
-                                results.push(to_hex_string(result) + "   " +
-                                             entry.path().to_str().unwrap());
+                                let mut hasher = Sha1::new();
+                                hasher.input(&data);
+                                results.push(hasher.result_str() + "    " +
+                                             entry.path().to_str().unwrap())
                             }
                         }
                     }
+
                 }
             }
             results.join("\n")
@@ -478,12 +431,11 @@ fn calculate_sha1(path: &Path) -> String {
             match file.read_to_end(&mut data) {
                 Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
                 Ok(_) => {
-                    let mut result = vec![0; Sha1::output_bytes()];
-                    let mut sha = Sha1::default();
-
-                    sha.update(data);
-                    sha.result(&mut result);
-                    String::from(to_hex_string(result) + "    " + path.to_str().unwrap())
+                    //let mut result = vec![0; Sha1::output_bytes()];
+                    //let mut sha = Sha1::default();
+                    let mut hasher = Sha1::new();
+                    hasher.input(&data);
+                    String::from(hasher.result_str() + "    " + path.to_str().unwrap())
                 }
             }
         }
@@ -493,7 +445,7 @@ fn calculate_sha1(path: &Path) -> String {
 
 fn main() {
     let matches = App::new("shasum")
-        .version("0.3.0")
+        .version("0.4.0")
         .author("Smirnov V. <smirnovvad7@gmail.com>")
         .about("Calculate sha hashes for files")
         .arg(Arg::with_name("INPUT")
