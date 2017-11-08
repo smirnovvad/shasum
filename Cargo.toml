@@ -1,9 +1,18 @@
 [package]
 name = "shasum"
+description = "Print SHA checksums."
+repository = "https://github.com/smirnovvad/shasum"
+
+keywords = ["hash", "sha", "crypto", "digest"]
+categories = ["cryptography"]
+licence = ["GPL-3.0"]
 version = "0.4.0"
 authors = ["Vadim Smirnov <smirnovvad7@gmail.com>"]
 
-[dependencies]
+[badges]
+travis-ci = { repository = "smirnovvad/shasum", branch = "master" }
+maintenance = { status = "as-is" }
 
+[dependencies]
 rust-crypto = "^0.2"
 clap = "^2"

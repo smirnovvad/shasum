@@ -469,7 +469,7 @@ fn main() {
     let matches = App::new("shasum")
         .version("0.4.0")
         .author("Smirnov V. <smirnovvad7@gmail.com>")
-        .about("Calculate sha hashes for files")
+        .about("Print SHA checksums.")
         .arg(
             Arg::with_name("INPUT")
                 .help("Sets the input file to use")
