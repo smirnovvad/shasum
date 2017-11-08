@@ -2,7 +2,8 @@ extern crate clap;
 extern crate crypto;
 use clap::{Arg, App};
 use std::error::Error;
-use std::fs;
+use std::fs::read_dir;
+use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 use self::crypto::digest::Digest;
@@ -15,12 +16,12 @@ fn calculate_sha512256(path: &Path) -> String {
     match path.is_dir() {
         true => {
 
-            let paths = fs::read_dir(path).unwrap();
+            let paths = read_dir(path).unwrap();
             for entry in paths {
                 if let Ok(entry) = entry {
                     // Here, `entry` is a `DirEntry`.
 
-                    let mut file = match fs::File::open(entry.path()) {
+                    let mut file = match File::open(entry.path()) {
                         Err(why) => {
                             panic!("Couldn't read {}: {}", path.display(), why.description())
                         }
@@ -31,16 +32,19 @@ fn calculate_sha512256(path: &Path) -> String {
                     if entry.path().is_file() {
                         match file.read_to_end(&mut data) {
                             Err(why) => {
-                                panic!("couldn't read {}: {}, {:?}",
-                                       path.display(),
-                                       why.description(),
-                                       entry.path())
+                                panic!(
+                                    "Couldn't read {}: {}, {:?}",
+                                    path.display(),
+                                    why.description(),
+                                    entry.path()
+                                )
                             }
                             Ok(_) => {
                                 let mut hasher = Sha512Trunc256::new();
                                 hasher.input(&data);
-                                results.push(hasher.result_str() + "    " +
-                                             entry.path().to_str().unwrap())
+                                results.push(
+                                    hasher.result_str() + "    " + entry.path().to_str().unwrap(),
+                                )
                             }
                         }
                     }
@@ -51,7 +55,7 @@ fn calculate_sha512256(path: &Path) -> String {
         }
 
         false => {
-            let mut file = match fs::File::open(&path) {
+            let mut file = match File::open(&path) {
                 Err(why) => panic!("Couldn't read {}: {}", path.display(), why.description()),
                 Ok(file) => file,
             };
@@ -59,7 +63,7 @@ fn calculate_sha512256(path: &Path) -> String {
             let mut data = Vec::new();
 
             match file.read_to_end(&mut data) {
-                Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
+                Err(why) => panic!("Couldn't read {}: {}", path.display(), why.description()),
                 Ok(_) => {
                     let mut hasher = Sha512Trunc256::new();
                     hasher.input(&data);
@@ -77,12 +81,12 @@ fn calculate_sha512224(path: &Path) -> String {
     match path.is_dir() {
         true => {
 
-            let paths = fs::read_dir(path).unwrap();
+            let paths = read_dir(path).unwrap();
             for entry in paths {
                 if let Ok(entry) = entry {
                     // Here, `entry` is a `DirEntry`.
 
-                    let mut file = match fs::File::open(entry.path()) {
+                    let mut file = match File::open(entry.path()) {
                         Err(why) => {
                             panic!("Couldn't read {}: {}", path.display(), why.description())
                         }
@@ -93,16 +97,19 @@ fn calculate_sha512224(path: &Path) -> String {
                     if entry.path().is_file() {
                         match file.read_to_end(&mut data) {
                             Err(why) => {
-                                panic!("couldn't read {}: {}, {:?}",
-                                       path.display(),
-                                       why.description(),
-                                       entry.path())
+                                panic!(
+                                    "Couldn't read {}: {}, {:?}",
+                                    path.display(),
+                                    why.description(),
+                                    entry.path()
+                                )
                             }
                             Ok(_) => {
                                 let mut hasher = Sha512Trunc224::new();
                                 hasher.input(&data);
-                                results.push(hasher.result_str() + "    " +
-                                             entry.path().to_str().unwrap())
+                                results.push(
+                                    hasher.result_str() + "    " + entry.path().to_str().unwrap(),
+                                )
                             }
                         }
                     }
@@ -113,7 +120,7 @@ fn calculate_sha512224(path: &Path) -> String {
         }
 
         false => {
-            let mut file = match fs::File::open(&path) {
+            let mut file = match File::open(&path) {
                 Err(why) => panic!("Couldn't read {}: {}", path.display(), why.description()),
                 Ok(file) => file,
             };
@@ -121,7 +128,7 @@ fn calculate_sha512224(path: &Path) -> String {
             let mut data = Vec::new();
 
             match file.read_to_end(&mut data) {
-                Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
+                Err(why) => panic!("Couldn't read {}: {}", path.display(), why.description()),
                 Ok(_) => {
                     let mut hasher = Sha512Trunc224::new();
                     hasher.input(&data);
@@ -138,12 +145,12 @@ fn calculate_sha512(path: &Path) -> String {
     match path.is_dir() {
         true => {
 
-            let paths = fs::read_dir(path).unwrap();
+            let paths = read_dir(path).unwrap();
             for entry in paths {
                 if let Ok(entry) = entry {
                     // Here, `entry` is a `DirEntry`.
 
-                    let mut file = match fs::File::open(entry.path()) {
+                    let mut file = match File::open(entry.path()) {
                         Err(why) => {
                             panic!("Couldn't read {}: {}", path.display(), why.description())
                         }
@@ -154,16 +161,19 @@ fn calculate_sha512(path: &Path) -> String {
                     if entry.path().is_file() {
                         match file.read_to_end(&mut data) {
                             Err(why) => {
-                                panic!("couldn't read {}: {}, {:?}",
-                                       path.display(),
-                                       why.description(),
-                                       entry.path())
+                                panic!(
+                                    "Couldn't read {}: {}, {:?}",
+                                    path.display(),
+                                    why.description(),
+                                    entry.path()
+                                )
                             }
                             Ok(_) => {
                                 let mut hasher = Sha512::new();
                                 hasher.input(&data);
-                                results.push(hasher.result_str() + "    " +
-                                             entry.path().to_str().unwrap())
+                                results.push(
+                                    hasher.result_str() + "    " + entry.path().to_str().unwrap(),
+                                )
                             }
                         }
                     }
@@ -174,7 +184,7 @@ fn calculate_sha512(path: &Path) -> String {
         }
 
         false => {
-            let mut file = match fs::File::open(&path) {
+            let mut file = match File::open(&path) {
                 Err(why) => panic!("Couldn't read {}: {}", path.display(), why.description()),
                 Ok(file) => file,
             };
@@ -182,7 +192,7 @@ fn calculate_sha512(path: &Path) -> String {
             let mut data = Vec::new();
 
             match file.read_to_end(&mut data) {
-                Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
+                Err(why) => panic!("Couldn't read {}: {}", path.display(), why.description()),
                 Ok(_) => {
                     let mut hasher = Sha512::new();
                     hasher.input(&data);
@@ -200,12 +210,12 @@ fn calculate_sha384(path: &Path) -> String {
     match path.is_dir() {
         true => {
 
-            let paths = fs::read_dir(path).unwrap();
+            let paths = read_dir(path).unwrap();
             for entry in paths {
                 if let Ok(entry) = entry {
                     // Here, `entry` is a `DirEntry`.
 
-                    let mut file = match fs::File::open(entry.path()) {
+                    let mut file = match File::open(entry.path()) {
                         Err(why) => {
                             panic!("Couldn't read {}: {}", path.display(), why.description())
                         }
@@ -216,16 +226,19 @@ fn calculate_sha384(path: &Path) -> String {
                     if entry.path().is_file() {
                         match file.read_to_end(&mut data) {
                             Err(why) => {
-                                panic!("couldn't read {}: {}, {:?}",
-                                       path.display(),
-                                       why.description(),
-                                       entry.path())
+                                panic!(
+                                    "Couldn't read {}: {}, {:?}",
+                                    path.display(),
+                                    why.description(),
+                                    entry.path()
+                                )
                             }
                             Ok(_) => {
                                 let mut hasher = Sha384::new();
                                 hasher.input(&data);
-                                results.push(hasher.result_str() + "    " +
-                                             entry.path().to_str().unwrap())
+                                results.push(
+                                    hasher.result_str() + "    " + entry.path().to_str().unwrap(),
+                                )
                             }
                         }
                     }
@@ -236,7 +249,7 @@ fn calculate_sha384(path: &Path) -> String {
         }
 
         false => {
-            let mut file = match fs::File::open(&path) {
+            let mut file = match File::open(&path) {
                 Err(why) => panic!("Couldn't read {}: {}", path.display(), why.description()),
                 Ok(file) => file,
             };
@@ -244,7 +257,7 @@ fn calculate_sha384(path: &Path) -> String {
             let mut data = Vec::new();
 
             match file.read_to_end(&mut data) {
-                Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
+                Err(why) => panic!("Couldn't read {}: {}", path.display(), why.description()),
                 Ok(_) => {
                     let mut hasher = Sha384::new();
                     hasher.input(&data);
@@ -261,12 +274,12 @@ fn calculate_sha256(path: &Path) -> String {
     match path.is_dir() {
         true => {
 
-            let paths = fs::read_dir(path).unwrap();
+            let paths = read_dir(path).unwrap();
             for entry in paths {
                 if let Ok(entry) = entry {
                     // Here, `entry` is a `DirEntry`.
 
-                    let mut file = match fs::File::open(entry.path()) {
+                    let mut file = match File::open(entry.path()) {
                         Err(why) => {
                             panic!("Couldn't read {}: {}", path.display(), why.description())
                         }
@@ -277,16 +290,19 @@ fn calculate_sha256(path: &Path) -> String {
                     if entry.path().is_file() {
                         match file.read_to_end(&mut data) {
                             Err(why) => {
-                                panic!("couldn't read {}: {}, {:?}",
-                                       path.display(),
-                                       why.description(),
-                                       entry.path())
+                                panic!(
+                                    "Couldn't read {}: {}, {:?}",
+                                    path.display(),
+                                    why.description(),
+                                    entry.path()
+                                )
                             }
                             Ok(_) => {
                                 let mut hasher = Sha256::new();
                                 hasher.input(&data);
-                                results.push(hasher.result_str() + "    " +
-                                             entry.path().to_str().unwrap())
+                                results.push(
+                                    hasher.result_str() + "    " + entry.path().to_str().unwrap(),
+                                )
                             }
                         }
                     }
@@ -297,7 +313,7 @@ fn calculate_sha256(path: &Path) -> String {
         }
 
         false => {
-            let mut file = match fs::File::open(&path) {
+            let mut file = match File::open(&path) {
                 Err(why) => panic!("Couldn't read {}: {}", path.display(), why.description()),
                 Ok(file) => file,
             };
@@ -305,7 +321,7 @@ fn calculate_sha256(path: &Path) -> String {
             let mut data = Vec::new();
 
             match file.read_to_end(&mut data) {
-                Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
+                Err(why) => panic!("Couldn't read {}: {}", path.display(), why.description()),
                 Ok(_) => {
                     let mut hasher = Sha256::new();
                     hasher.input(&data);
@@ -323,12 +339,12 @@ fn calculate_sha224(path: &Path) -> String {
     match path.is_dir() {
         true => {
 
-            let paths = fs::read_dir(path).unwrap();
+            let paths = read_dir(path).unwrap();
             for entry in paths {
                 if let Ok(entry) = entry {
                     // Here, `entry` is a `DirEntry`.
 
-                    let mut file = match fs::File::open(entry.path()) {
+                    let mut file = match File::open(entry.path()) {
                         Err(why) => {
                             panic!("Couldn't read {}: {}", path.display(), why.description())
                         }
@@ -339,16 +355,19 @@ fn calculate_sha224(path: &Path) -> String {
                     if entry.path().is_file() {
                         match file.read_to_end(&mut data) {
                             Err(why) => {
-                                panic!("couldn't read {}: {}, {:?}",
-                                       path.display(),
-                                       why.description(),
-                                       entry.path())
+                                panic!(
+                                    "Couldn't read {}: {}, {:?}",
+                                    path.display(),
+                                    why.description(),
+                                    entry.path()
+                                )
                             }
                             Ok(_) => {
                                 let mut hasher = Sha224::new();
                                 hasher.input(&data);
-                                results.push(hasher.result_str() + "    " +
-                                             entry.path().to_str().unwrap())
+                                results.push(
+                                    hasher.result_str() + "    " + entry.path().to_str().unwrap(),
+                                )
                             }
                         }
                     }
@@ -359,7 +378,7 @@ fn calculate_sha224(path: &Path) -> String {
         }
 
         false => {
-            let mut file = match fs::File::open(&path) {
+            let mut file = match File::open(&path) {
                 Err(why) => panic!("Couldn't read {}: {}", path.display(), why.description()),
                 Ok(file) => file,
             };
@@ -367,7 +386,7 @@ fn calculate_sha224(path: &Path) -> String {
             let mut data = Vec::new();
 
             match file.read_to_end(&mut data) {
-                Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
+                Err(why) => panic!("Couldn't read {}: {}", path.display(), why.description()),
                 Ok(_) => {
                     let mut hasher = Sha224::new();
                     hasher.input(&data);
@@ -384,12 +403,12 @@ fn calculate_sha1(path: &Path) -> String {
     let mut results = Vec::new();
     match path.is_dir() {
         true => {
-            let paths = fs::read_dir(path).unwrap();
+            let paths = read_dir(path).unwrap();
             for entry in paths {
                 if let Ok(entry) = entry {
                     // Here, `entry` is a `DirEntry`.
 
-                    let mut file = match fs::File::open(entry.path()) {
+                    let mut file = match File::open(entry.path()) {
                         Err(why) => {
                             panic!("Couldn't read {}: {}", path.display(), why.description())
                         }
@@ -400,16 +419,19 @@ fn calculate_sha1(path: &Path) -> String {
                     if entry.path().is_file() {
                         match file.read_to_end(&mut data) {
                             Err(why) => {
-                                panic!("couldn't read {}: {}, {:?}",
-                                       path.display(),
-                                       why.description(),
-                                       entry.path())
+                                panic!(
+                                    "Couldn't read {}: {}, {:?}",
+                                    path.display(),
+                                    why.description(),
+                                    entry.path()
+                                )
                             }
                             Ok(_) => {
                                 let mut hasher = Sha1::new();
                                 hasher.input(&data);
-                                results.push(hasher.result_str() + "    " +
-                                             entry.path().to_str().unwrap())
+                                results.push(
+                                    hasher.result_str() + "    " + entry.path().to_str().unwrap(),
+                                )
                             }
                         }
                     }
@@ -421,7 +443,7 @@ fn calculate_sha1(path: &Path) -> String {
         }
 
         false => {
-            let mut file = match fs::File::open(&path) {
+            let mut file = match File::open(&path) {
                 Err(why) => panic!("Couldn't read {}: {}", path.display(), why.description()),
                 Ok(file) => file,
             };
@@ -429,7 +451,7 @@ fn calculate_sha1(path: &Path) -> String {
             let mut data = Vec::new();
 
             match file.read_to_end(&mut data) {
-                Err(why) => panic!("couldn't read {}: {}", path.display(), why.description()),
+                Err(why) => panic!("Couldn't read {}: {}", path.display(), why.description()),
                 Ok(_) => {
                     //let mut result = vec![0; Sha1::output_bytes()];
                     //let mut sha = Sha1::default();
@@ -448,15 +470,19 @@ fn main() {
         .version("0.4.0")
         .author("Smirnov V. <smirnovvad7@gmail.com>")
         .about("Calculate sha hashes for files")
-        .arg(Arg::with_name("INPUT")
-                 .help("Sets the input file to use")
-                 .required(true)
-                 .index(1))
-        .arg(Arg::with_name("algorithm")
-                 .short("a")
-                 .takes_value(true)
-                 .possible_values(&["1", "224", "256", "384", "512", "512224", "512256"])
-                 .default_value("1"))
+        .arg(
+            Arg::with_name("INPUT")
+                .help("Sets the input file to use")
+                .required(true)
+                .index(1),
+        )
+        .arg(
+            Arg::with_name("algorithm")
+                .short("a")
+                .takes_value(true)
+                .possible_values(&["1", "224", "256", "384", "512", "512224", "512256"])
+                .default_value("1"),
+        )
         .get_matches();
 
     // Calling .unwrap() is safe here because "INPUT" is required (if "INPUT" wasn't
