@@ -460,9 +460,9 @@ fn calculate_sha1(path: &Path) -> String {
 
 fn main() {
     let matches = App::new("shasum")
-        .version("0.5.0")
+        .version("0.5.1")
         .author("Smirnov V. <smirnovvad7@gmail.com>")
-        .about("Print SHA checksums.")
+        .about("Calculate SHA checksums for input file or directory.")
         .arg(
             Arg::with_name("INPUT FILE")
                 .help("Sets the input file to use")
