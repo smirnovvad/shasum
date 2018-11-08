@@ -6,7 +6,7 @@ repository = "https://github.com/smirnovvad/shasum"
 keywords = ["hash", "sha", "crypto", "digest"]
 categories = ["cryptography"]
 license = "GPL-3.0"
-version = "0.5.1"
+version = "0.6.1"
 authors = ["Vadim Smirnov <smirnovvad7@gmail.com>"]
 
 [badges]

@@ -50,7 +50,7 @@ fn read_data(path: &Path, sha: usize) -> String {
 
 fn main() {
     let matches = App::new("shasum")
-        .version("0.5.2")
+        .version("0.6.0")
         .author("Smirnov V. <smirnovvad7@gmail.com>")
         .about("Calculate SHA checksums for input file or directory.")
         .arg(
