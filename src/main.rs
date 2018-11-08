@@ -1,135 +1,51 @@
 extern crate clap;
-extern crate crypto;
-use self::crypto::digest::Digest;
-use self::crypto::sha1::*;
-use self::crypto::sha2::*;
+extern crate sha1;
+extern crate sha2;
 use clap::{App, Arg};
-use std::error::Error;
+use sha2::Digest;
+use std::fs;
 use std::fs::read_dir;
-use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 
-fn calculate_sha(path: &Path, sha: usize) -> String {
+fn calculate_hash(data: &mut Vec<u8>, sha: usize) -> String {
+    let strout: String = match sha {
+        224 => format!("{:x}", sha2::Sha224::digest(&data)),
+        256 => format!("{:x}", sha2::Sha256::digest(&data)),
+        384 => format!("{:x}", sha2::Sha384::digest(&data)),
+        512 => format!("{:x}", sha2::Sha512::digest(&data)),
+        512224 => format!("{:x}", sha2::Sha512Trunc224::digest(&data)),
+        512256 => format!("{:x}", sha2::Sha512Trunc256::digest(&data)),
+        _ => format!("{:x}", sha1::Sha1::digest(&data)),
+    };
+    strout
+}
+
+fn read_data(path: &Path, sha: usize) -> String {
     let mut results = Vec::new();
     if path.is_dir() {
         let paths = read_dir(path).unwrap();
         for entry in paths {
             if let Ok(entry) = entry {
-                // Here, `entry` is a `DirEntry`.
-
-                let mut file = match File::open(entry.path()) {
-                    Err(why) => panic!("Couldn't read {}: {}", path.display(), why.description()),
-                    Ok(file) => file,
-                };
-
-                let mut data = Vec::new();
                 if entry.path().is_file() {
-                    match file.read_to_end(&mut data) {
-                        Err(why) => panic!(
-                            "Couldn't read {}: {}, {:?}",
-                            path.display(),
-                            why.description(),
-                            entry.path()
-                        ),
-                        Ok(_) => {
-                            let mut strout = match sha {
-                                224 => {
-                                    let mut hasher = Sha224::new();
-                                    hasher.input(&data);
-                                    hasher.result_str()
-                                }
-                                256 => {
-                                    let mut hasher = Sha256::new();
-                                    hasher.input(&data);
-                                    hasher.result_str()
-                                }
-                                384 => {
-                                    let mut hasher = Sha384::new();
-                                    hasher.input(&data);
-                                    hasher.result_str()
-                                }
-                                512 => {
-                                    let mut hasher = Sha512::new();
-                                    hasher.input(&data);
-                                    hasher.result_str()
-                                }
-                                512224 => {
-                                    let mut hasher = Sha512Trunc224::new();
-                                    hasher.input(&data);
-                                    hasher.result_str()
-                                }
-                                512256 => {
-                                    let mut hasher = Sha512Trunc256::new();
-                                    hasher.input(&data);
-                                    hasher.result_str()
-                                }
-                                _ => {
-                                    let mut hasher = Sha1::new();
-                                    hasher.input(&data);
-                                    hasher.result_str()
-                                }
-                            };
-
-                            results.push(strout + "    " + entry.path().to_str().unwrap())
-                        }
+                    if let Ok(mut file) = fs::File::open(&entry.path()) {
+                        let mut data = Vec::new();
+                        file.read_to_end(&mut data).unwrap();
+                        let strout = calculate_hash(&mut data, sha);
+                        results.push(strout + "    " + entry.path().to_str().unwrap())
                     }
                 }
             }
         }
-        results.join("\n")
     } else {
-        let mut file = match File::open(&path) {
-            Err(why) => panic!("Couldn't read {}: {}", path.display(), why.description()),
-            Ok(file) => file,
-        };
-
-        let mut data = Vec::new();
-
-        match file.read_to_end(&mut data) {
-            Err(why) => panic!("Couldn't read {}: {}", path.display(), why.description()),
-            Ok(_) => {
-                let mut strout = match sha {
-                    224 => {
-                        let mut hasher = Sha224::new();
-                        hasher.input(&data);
-                        hasher.result_str()
-                    }
-                    256 => {
-                        let mut hasher = Sha256::new();
-                        hasher.input(&data);
-                        hasher.result_str()
-                    }
-                    384 => {
-                        let mut hasher = Sha384::new();
-                        hasher.input(&data);
-                        hasher.result_str()
-                    }
-                    512 => {
-                        let mut hasher = Sha512::new();
-                        hasher.input(&data);
-                        hasher.result_str()
-                    }
-                    512224 => {
-                        let mut hasher = Sha512Trunc224::new();
-                        hasher.input(&data);
-                        hasher.result_str()
-                    }
-                    512256 => {
-                        let mut hasher = Sha512Trunc256::new();
-                        hasher.input(&data);
-                        hasher.result_str()
-                    }
-                    _ => {
-                        let mut hasher = Sha1::new();
-                        hasher.input(&data);
-                        hasher.result_str()
-                    }
-                };
-                strout + "    " + path.to_str().unwrap()
-            }
+        if let Ok(mut file) = fs::File::open(&path) {
+            let mut data = Vec::new();
+            file.read_to_end(&mut data).unwrap();
+            let strout = calculate_hash(&mut data, sha);
+            results.push(strout + "    " + path.to_str().unwrap())
         }
     }
+    return results.join("\n");
 }
 
 fn main() {
@@ -156,13 +72,13 @@ fn main() {
     // required we could have used an 'if let' to conditionally get the value)
     let path = Path::new(matches.value_of("INPUT FILE").unwrap());
     match matches.value_of("algorithm").unwrap() {
-        "1" => println!("{}", calculate_sha(path, 1)),
-        "224" => println!("{}", calculate_sha(path, 224)),
-        "256" => println!("{}", calculate_sha(path, 256)),
-        "384" => println!("{}", calculate_sha(path, 384)),
-        "512" => println!("{}", calculate_sha(path, 512)),
-        "512224" => println!("{}", calculate_sha(path, 512224)),
-        "512256" => println!("{}", calculate_sha(path, 512256)),
+        "1" => println!("{}", read_data(path, 1)),
+        "224" => println!("{}", read_data(path, 224)),
+        "256" => println!("{}", read_data(path, 256)),
+        "384" => println!("{}", read_data(path, 384)),
+        "512" => println!("{}", read_data(path, 512)),
+        "512224" => println!("{}", read_data(path, 512224)),
+        "512256" => println!("{}", read_data(path, 512256)),
         _ => unreachable!(),
     }
 }

@@ -14,5 +14,6 @@ travis-ci = { repository = "smirnovvad/shasum", branch = "master" }
 maintenance = { status = "as-is" }
 
 [dependencies]
-rust-crypto = "^0.2"
 clap = "^2"
+sha2 = "0.8.0"
+sha-1 = "0.8.0"
