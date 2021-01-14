@@ -1,11 +1,9 @@
 # shasum
 [![Build Status](https://travis-ci.org/smirnovvad/shasum.svg?branch=master)](https://travis-ci.org/smirnovvad/shasum)
 
-shasum implemented in rust using rust-crypto lib
+shasum implemented in rust.
 
-Calculate SHA checksum for files
-
-also can print hash for each file in directory
+Print SHA checksums from STDIN, input file or directory.
 
 >USAGE:
 >    shasum [OPTIONS] <INPUT>
