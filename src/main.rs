@@ -5,10 +5,10 @@ use clap::{App, Arg};
 use sha2::Digest;
 use std::fs;
 use std::fs::read_dir;
-use std::io::prelude::*;
+use std::io::{self, Read};
 use std::path::Path;
 
-fn calculate_hash(data: &Vec<u8>, sha: usize) -> String {
+fn calculate_hash(data: &[u8], sha: usize) -> String {
     let strout: String = match sha {
         224 => format!("{:x}", sha2::Sha224::digest(&data)),
         256 => format!("{:x}", sha2::Sha256::digest(&data)),
@@ -52,12 +52,12 @@ fn main() {
     let matches = App::new("shasum")
         .version("0.7.0")
         .author("Smirnov V. <smirnovvad7@gmail.com>")
-        .about("Calculate SHA checksums for input file or directory.")
+        .about("Print SHA checksums from STDIN, input file or directory.")
         .arg(
-            Arg::new("INPUT")
-                .about("Sets the input file to use")
+            Arg::new("FILE")
+                .about("With no FILE, or when FILE is -, read standard input.")
                 .takes_value(true)
-                .required(true)
+                .required(false)
                 .index(1),
         )
         .arg(
@@ -73,15 +73,20 @@ fn main() {
         )
         .get_matches();
 
-    let path = Path::new(matches.value_of("INPUT").unwrap());
-    match matches.value_of("algorithm").unwrap() {
-        "1" => println!("{}", read_data(path, 1)),
-        "224" => println!("{}", read_data(path, 224)),
-        "256" => println!("{}", read_data(path, 256)),
-        "384" => println!("{}", read_data(path, 384)),
-        "512" => println!("{}", read_data(path, 512)),
-        "512224" => println!("{}", read_data(path, 512224)),
-        "512256" => println!("{}", read_data(path, 512256)),
-        _ => unreachable!(),
+    let sha: usize = matches.value_of("algorithm").unwrap().parse().unwrap();
+
+    match matches.value_of("FILE") {
+        Some("-") | None => {
+            let mut buffer = String::new();
+            let stdin = io::stdin();
+            let mut handle = stdin.lock();
+
+            handle.read_to_string(&mut buffer).unwrap();
+            println!("{}", calculate_hash(&buffer.as_bytes(), sha));
+        }
+        Some(path) => {
+            let path = Path::new(path);
+            println!("{}", read_data(path, sha));
+        }
     }
 }

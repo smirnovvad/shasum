@@ -1,6 +1,6 @@
 [package]
 name = "shasum"
-description = "Calculate SHA checksums for input file or directory."
+description = "Print SHA checksums from STDIN, input file or directory."
 repository = "https://github.com/smirnovvad/shasum"
 edition="2018"
 
