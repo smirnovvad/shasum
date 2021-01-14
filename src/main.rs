@@ -8,7 +8,7 @@ use std::fs::read_dir;
 use std::io::prelude::*;
 use std::path::Path;
 
-fn calculate_hash(data: &mut Vec<u8>, sha: usize) -> String {
+fn calculate_hash(data: &Vec<u8>, sha: usize) -> String {
     let strout: String = match sha {
         224 => format!("{:x}", sha2::Sha224::digest(&data)),
         256 => format!("{:x}", sha2::Sha256::digest(&data)),
@@ -31,7 +31,7 @@ fn read_data(path: &Path, sha: usize) -> String {
                     if let Ok(mut file) = fs::File::open(&entry.path()) {
                         let mut data = Vec::new();
                         file.read_to_end(&mut data).unwrap();
-                        let strout = calculate_hash(&mut data, sha);
+                        let strout = calculate_hash(&data, sha);
                         results.push(strout + "    " + entry.path().to_str().unwrap())
                     }
                 }
@@ -41,7 +41,7 @@ fn read_data(path: &Path, sha: usize) -> String {
         if let Ok(mut file) = fs::File::open(&path) {
             let mut data = Vec::new();
             file.read_to_end(&mut data).unwrap();
-            let strout = calculate_hash(&mut data, sha);
+            let strout = calculate_hash(&data, sha);
             results.push(strout + "    " + path.to_str().unwrap())
         }
     }
@@ -50,27 +50,30 @@ fn read_data(path: &Path, sha: usize) -> String {
 
 fn main() {
     let matches = App::new("shasum")
-        .version("0.6.0")
+        .version("0.7.0")
         .author("Smirnov V. <smirnovvad7@gmail.com>")
         .about("Calculate SHA checksums for input file or directory.")
         .arg(
-            Arg::with_name("INPUT FILE")
-                .help("Sets the input file to use")
+            Arg::new("INPUT")
+                .about("Sets the input file to use")
+                .takes_value(true)
                 .required(true)
                 .index(1),
         )
         .arg(
-            Arg::with_name("algorithm")
-                .short("a")
+            Arg::new("algorithm")
+                .short('a')
+                .long("algorithm")
+                .value_name("algorithm")
+                .about("Sets the algorithm to use")
                 .takes_value(true)
+                .required(false)
                 .possible_values(&["1", "224", "256", "384", "512", "512224", "512256"])
                 .default_value("1"),
         )
         .get_matches();
 
-    // Calling .unwrap() is safe here because "INPUT" is required (if "INPUT" wasn't
-    // required we could have used an 'if let' to conditionally get the value)
-    let path = Path::new(matches.value_of("INPUT FILE").unwrap());
+    let path = Path::new(matches.value_of("INPUT").unwrap());
     match matches.value_of("algorithm").unwrap() {
         "1" => println!("{}", read_data(path, 1)),
         "224" => println!("{}", read_data(path, 224)),

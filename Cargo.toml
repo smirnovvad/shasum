@@ -2,11 +2,12 @@
 name = "shasum"
 description = "Calculate SHA checksums for input file or directory."
 repository = "https://github.com/smirnovvad/shasum"
+edition="2018"
 
 keywords = ["hash", "sha", "crypto", "digest"]
 categories = ["cryptography"]
 license = "GPL-3.0"
-version = "0.6.1"
+version = "0.7.0"
 authors = ["Vadim Smirnov <smirnovvad7@gmail.com>"]
 
 [badges]
@@ -14,6 +15,7 @@ travis-ci = { repository = "smirnovvad/shasum", branch = "master" }
 maintenance = { status = "as-is" }
 
 [dependencies]
-clap = "^2"
-sha2 = "0.8.0"
-sha-1 = "0.8.0"
+clap = "3.0.0-beta.2"
+sha2 = "0.9"
+sha-1 = "0.9"
+
